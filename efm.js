@@ -217,7 +217,7 @@ function Epub(epubfile, callback) {
     getComponent = function (id, callback) {
         var reldir = getDir(id);
         var ext = id.split('.').slice(-1)[0];
-        if (["html", "xhtml", "xml"].indexOf(ext) != -1) {
+        if (["html", "htm", "xhtml", "xml"].indexOf(ext) != -1) {
             files[id].getData(new zip.TextWriter(), function (data) {
                 var doc = new DOMParser().parseFromString(data, "text/xml");
                 var imgs = doc.getElementsByTagName("img");
