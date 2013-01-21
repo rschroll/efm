@@ -8,8 +8,8 @@ can use Monocle to load Epub files in a completely client-side manner.
 
 [See it][3] in action, and check out [this branch][4] to see how EFM is
 deployed.
-[3]: http://github.com/rschroll/efm "EFM Demonstration"
-[4]: https://github.com/rschroll/efm/tree/github-pages "github-pages branch"
+[3]: http://rschroll.github.com/efm "EFM Demonstration"
+[4]: https://github.com/rschroll/efm/tree/gh-pages "gh-pages branch"
 
 Usage
 -----
