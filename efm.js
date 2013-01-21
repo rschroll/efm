@@ -212,7 +212,7 @@ function Epub(epubfile, callback) {
     };
     
     // Part of Monocle's book data object interface.
-    // Note that X?H?TML files are parsed and URLs in <img> and <link>
+    // Note that (X|HT)ML files are parsed and URLs in <img> and <link>
     // to resouces in the Epub are replaced with data URLs.
     getComponent = function (id, callback) {
         var reldir = getDir(id);

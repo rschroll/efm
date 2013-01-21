@@ -56,22 +56,22 @@ Implementation Notes
   the sake of this explanation, let's divide the contents of an Epub
   archive into three classes: control files describe the contents of the
   Epub file, spine files are the HTML files that contain the text of the
-  book, and auxillary files are referenced by the spine files.  The
+  book, and auxiliary files are referenced by the spine files.  The
   control files are parsed by EFM into a form usable by Monocle, and the
   contents of the spine files are passed to Monocle as requested.  But
-  Monocle (apparently) has no way to request the auxillary files when
+  Monocle (apparently) has no way to request the auxiliary files when
   they are referenced.  Thus, your web browser will attempt to fetch
   these files from the same place that served the HTML file, and will
   fail to find them.
 
   To attempt to mitigate this problem, EFM looks through spine files for
-  images or stylesheet links that refer to auxillary files.  The targets
+  images or stylesheet links that refer to auxiliary files.  The targets
   of these links are replaced by data URLs that encode the contents of
-  the auxillary files.  In many cases, this is enough.  However, it is
-  possible for auxillary files to reference other auxillary files (a
+  the auxiliary files.  In many cases, this is enough.  However, it is
+  possible for auxiliary files to reference other auxiliary files (a
   stylesheet referencing a font, for example, or an SVG illustration
   referencing a raster image).  This could be dealt with with a 
-  multiple-pass system to sweep up all the auxillary files, but such
+  multiple-pass system to sweep up all the auxiliary files, but such
   and approach has not been implemented.
   
   Such a system would be a rather large undertaking, as we would have
