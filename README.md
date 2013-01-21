@@ -48,7 +48,7 @@ Implementation Notes
   but invalid ones will likely produce all sorts of unexpected and
   fascinating behavior.
 
-* If you are serving the HTML file from `file:\\`, you will need to
+* If you are serving the HTML file from `file://`, you will need to
   launch Chrome with the `--allow-file-access-from-files` flag. Firefox
   works fine by default.
 
