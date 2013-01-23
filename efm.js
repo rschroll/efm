@@ -35,14 +35,25 @@ MIMETYPES = {
     svg: "image/svg+xml",
 }
 
-// Get the directory portion of path.  Include a trailing slash unless
-// there is no directory.  The path separator is '/', for use with zip
-// files.
+// Get the directory portion of path.  The path separator is '/', for
+// use with zip files.
 function getDir(path) {
-    var dir = path.split('/').slice(0,-1).join('/');
-    if (dir.length > 0)
-        dir += '/';
-    return dir;
+    return path.split('/').slice(0,-1).join('/');
+}
+
+// Join and normalize the two paths.  The path separator is '/', for use
+// with zip files.
+function joinPaths(path1, path2) {
+    var path = path1.split('/').concat(path2.split('/')),
+        normpath = [];
+    for (var i in path) {
+        var dir = path[i];
+        if (dir == "..")
+            normpath.pop();
+        else if (dir != "." && dir != "")
+            normpath.push(dir);
+    }
+    return normpath.join('/');
 }
 
 // A book data object for the Epub file 'epubfile', a HTML5 File object.
@@ -90,7 +101,7 @@ function Epub(epubfile, callback) {
                 item = items[i];
                 var id = item.getAttribute("id");
                 var href = item.getAttribute("href");
-                idmap[id] = reldir + href;
+                idmap[id] = joinPaths(reldir, href);
                 var props = item.getAttribute("properties")
                 if (props != null && props.split(" ").indexOf("nav") > -1)
                     nav_href = idmap[id];
@@ -162,7 +173,7 @@ function Epub(epubfile, callback) {
                 var link = node.getElementsByTagName("a")[0];
                 if (link != undefined) {
                     var child = { title: link.firstChild.nodeValue,
-                                  src: reldir + link.getAttribute("href") };
+                                  src: joinPaths(reldir, link.getAttribute("href")) };
                     var olist = node.getElementsByTagName("ol")[0];
                     if (olist != undefined)
                         child["children"] = parseNavList(olist, reldir);
@@ -191,7 +202,7 @@ function Epub(epubfile, callback) {
                 var nav_label = node.getElementsByTagName("text")[0];
                 child["title"] = nav_label.firstChild.nodeValue;
                 var content = node.getElementsByTagName("content")[0];
-                child["src"] = reldir + content.getAttribute("src");
+                child["src"] = joinPaths(reldir, content.getAttribute("src"));
                 var child_nav = parseNCXChildren(node, reldir);
                 if (child_nav.length > 0)
                     child["children"] = child_nav;
@@ -223,7 +234,7 @@ function Epub(epubfile, callback) {
                 var imgs = doc.getElementsByTagName("img");
                 for (var i=0; i<imgs.length; i++) {
                     var img = imgs[i];
-                    var src = reldir + img.getAttribute("src");
+                    var src = joinPaths(reldir, img.getAttribute("src"));
                     var data_url = data_urls[src];
                     if (data_url != undefined)
                         img.setAttribute("src", data_url);
@@ -232,7 +243,7 @@ function Epub(epubfile, callback) {
                 var links = doc.getElementsByTagName("link");
                 for (var i=0; i<links.length; i++) {
                     var l = links[i];
-                    var href = reldir + l.getAttribute("href");
+                    var href = joinPaths(reldir, l.getAttribute("href"));
                     var data_url = data_urls[href];
                     if (data_url != undefined)
                         l.setAttribute("href", data_url);
