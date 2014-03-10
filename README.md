@@ -38,6 +38,40 @@ new Epub(file, function (bookData) {
 With a modern browser on a modern machine, EFM is reasonably snappy.  I can
 load _Moby Dick_ in under 1 second on my laptop, for example.
 
+### Working with remote Epub files
+
+EFM is designed to work with local files, since Monocle is designed for
+working with remote files.  But instead of dealing with the remote Epub
+file directly, Monocle trusts that you will convert it to a [book data
+object][2] on the server.  This is much better than doing the conversion
+on the client with EFM, since the server has known capabilities, the server
+is generally more powerful than the clients, and this doesn't require the
+client to download as much javascript.  If you're worried about the impact
+on the server, you can always do the conversion offline and upload the
+unzipped Epub file and the [book data object][2] to the server.  This means
+that no conversion is needed whenever a client requests the book.  Think
+of all the electrons you'll save!
+
+That said, it is possible for EFM to work with remote Epub files.  The
+first argument of the `Epub` object can be a [HTML5 blob object][7], rather
+than a file object.  Conveniently, an [XMLHttpRequest][8] can be made to
+return a blob.  Thus, the simplest code to display a remote Epub file is
+```javascript
+var request = new XMLHttpRequest();
+request.open("GET", "url/of/file.epub", true);
+request.responseType = "blob";
+request.onload = function () {
+    new Epub(request.response, function (bookData) {
+        Monocle.Reader("reader", bookData);
+    });
+};
+request.send();
+```
+But before you do this, please think long and hard if there isn't a better
+way.  Think of the electrons!
+[7]: http://www.w3.org/TR/FileAPI/#dfn-Blob "W3C File API"
+[8]: https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/Sending_and_Receiving_Binary_Data "MDN Documentation"
+
 Implementation Notes
 --------------------
 * I am a complete novice at Javascript, as my code demonstrates.  Please

@@ -85,7 +85,7 @@ function Epub(epubfile, callback) {
     }, console.error);
     
     // Find the location of the OPF file from container.xml
-    findOPF = function (xml) {
+    function findOPF(xml) {
         var doc = new DOMParser().parseFromString(xml, "text/xml");
         var opffn = doc.getElementsByTagName("rootfile")[0].getAttribute("full-path");
         getComponent(opffn, parseOPF(getDir(opffn)));
@@ -93,7 +93,7 @@ function Epub(epubfile, callback) {
     
     // Parse the OPF file to get the spine, the table of contents, and
     // the metadata.
-    parseOPF = function (reldir) {
+    function parseOPF(reldir) {
         return function (xml) {
             var doc = new DOMParser().parseFromString(xml, "text/xml");
             var idmap = {};
@@ -158,19 +158,19 @@ function Epub(epubfile, callback) {
     };
     
     // Parse the Epub3 table of contents.
-    parseNav = function (reldir) {
+    function parseNav(reldir) {
         return function (navdata) {
             var navdoc = new DOMParser().parseFromString(navdata, "text/xml");
             var navs = navdoc.getElementsByTagName("nav");
             for (var i=0; i<navs.length; i++) {
                 var nav = navs[i];
                 if (nav.getAttribute("epub:type") == "toc")
-                    contents = self.parseNavList(nav.getElementsByTagName("ol")[0], reldir);
+                    contents = parseNavList(nav.getElementsByTagName("ol")[0], reldir);
             }
         };
     };
     
-    parseNavList = function (element, reldir) {
+    function parseNavList(element, reldir) {
         var children = [];
         for (var i=0; i<element.childNodes.length; i++) {
             var node = element.childNodes[i];
@@ -190,15 +190,15 @@ function Epub(epubfile, callback) {
     };
     
     // Parse the Epub2 table of contents.
-    parseNCX = function (reldir) {
+    function parseNCX(reldir) {
         return function (ncxdata) {
             var ncx = new DOMParser().parseFromString(ncxdata, "text/xml");
             var navmap = ncx.getElementsByTagName("navMap")[0];
-            contents = self.parseNCXChildren(navmap, reldir);
+            contents = parseNCXChildren(navmap, reldir);
         };
     };
     
-    parseNCXChildren = function(element, reldir) {
+    function parseNCXChildren(element, reldir) {
         var children = [];
         for (var i=0; i<element.childNodes.length; i++) {
             var node = element.childNodes[i];
@@ -218,19 +218,19 @@ function Epub(epubfile, callback) {
     };
     
     // Part of Monocle's book data object interface.
-    getComponents = function () {
+    this.getComponents = function () {
         return spine;
     };
     
     // Part of Monocle's book data object interface.
-    getContents = function () {
+    this.getContents = function () {
         return contents;
     };
     
     // Part of Monocle's book data object interface.
     // Note that (X|HT)ML files are parsed and URLs in <img> and <link>
     // to resouces in the Epub are replaced with data URLs.
-    getComponent = function (id, callback) {
+    function getComponent(id, callback) {
         var reldir = getDir(id);
         var ext = id.split('.').slice(-1)[0];
         if (["html", "htm", "xhtml", "xml"].indexOf(ext) != -1) {
@@ -257,9 +257,10 @@ function Epub(epubfile, callback) {
             });
         }
     };
+    this.getComponent = getComponent;
     
     // Return the content, via the callback, as a data URL.
-    getEncodedComponent = function (id, callback) {
+    function getEncodedComponent(id, callback) {
         var mime = MIMETYPES[id.split('.').slice(-1)[0]];
         files[id].getData(new zip.Data64URIWriter(mime), function (data) {
             callback(data);
@@ -267,14 +268,16 @@ function Epub(epubfile, callback) {
     };
     
     // Part of Monocle's book data object interface.
-    getMetaData = function (key) {
+    this.getMetaData = function (key) {
         return metadata[key];
-    }
+    };
     
     // Called at the end of the initialization process.  At this point,
     // the object is ready to be passed to a Monocle.Reader.
-    onLoaded = function () {
-        callback(this);
-    };
+    var onLoaded = (function(self) {
+        return function () {
+            callback(self);
+        }
+    })(this);
 }
 
