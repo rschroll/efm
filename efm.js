@@ -73,8 +73,8 @@ function Epub(epubfile, callback) {
     var num_data_urls = 0;
     zip.createReader(new zip.BlobReader(epubfile), function (zipReader) {
         zipReader.getEntries(function (entries) {
-            for (i in entries) {
-                e = entries[i];
+            for (var i in entries) {
+                var e = entries[i];
                 files[e.filename] = e;
             }
             zipReader.close();
@@ -103,11 +103,11 @@ function Epub(epubfile, callback) {
             var manifest = doc.getElementsByTagName("manifest")[0];
             var items = manifest.getElementsByTagName("item");
             for (var i=0; i<items.length; i++) {
-                item = items[i];
+                var item = items[i];
                 var id = item.getAttribute("id");
                 var href = item.getAttribute("href");
                 idmap[id] = joinPaths(reldir, href);
-                var props = item.getAttribute("properties")
+                var props = item.getAttribute("properties");
                 if (props != null && props.split(" ").indexOf("nav") > -1)
                     nav_href = idmap[id];
             }
@@ -116,7 +116,7 @@ function Epub(epubfile, callback) {
             var spineel = doc.getElementsByTagName("spine")[0];
             var sitems = spineel.getElementsByTagName("itemref");
             for (var i=0; i<sitems.length; i++) {
-                id = sitems[i].getAttribute("idref");
+                var id = sitems[i].getAttribute("idref");
                 spine.push(idmap[id]);
             }
             
